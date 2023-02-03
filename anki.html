@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多行转 csv</title>
+</head>
+
+<body>
+
+    <form>
+        <p>
+            <label for="input">输入</label>
+        </p>
+        <textarea name="input" id="input" cols="30" rows="10"></textarea>
+        <p>
+            <input type="checkbox" name="filter_empty_line" id="filter_empty_line">
+            <label for="filter_empty_line">过滤空行</label>
+        </p>
+        <p>
+            <label for="output">输出</label>
+        </p>
+        <textarea name="output" id="output" cols="30" rows="10"></textarea>
+        <p>
+            <button type="button" onclick="convert()">转换</button>
+        </p>
+    </form>
+
+    <script>
+        /*
+        Input:
+        [
+            ["a", "b", ",", "\""],
+            ["c", "d", ",\",,", "\",\""]
+        ]
+        Output:
+        "a","b",",","\""
+        "c","d",
+        */
+        const generate_csv = (arr) => {
+            const escape_csv_string = (str) => {
+                let out = "\"";
+                for (let i = 0; i < str.length; i++) {
+                    if (str[i] === "\"") {
+                        out += "\"\"";
+                    } else {
+                        out += str[i];
+                    }
+                }
+                out += "\"";
+                return out;
+            }
+            let out = "";
+            for (let i = 0; i < arr.length; i++) {
+                for (let j = 0; j < arr[i].length; j++) {
+                    if (j > 0) {
+                        out += ",";
+                    }
+                    out += escape_csv_string(arr[i][j]);
+                }
+                out += "\n";
+            }
+            return out;
+        }
+
+        const convert = () => {
+            alert("转换中...")
+            const input = document.getElementById("input").value;
+            const do_filter = document.getElementById("filter_empty_line").checked;
+            const lines = input.split("\n").filter((line) => {
+                return do_filter ? line.trim() !== "" : true;
+            });
+            // convert every two line to one csv line
+            const next_input = [];
+            if(!(lines.length % 2 === 0)) {
+                alert("输入行数不是偶数");
+                return;
+            }
+            for (let i = 0; i < lines.length; i += 2) {
+                next_input.push([lines[i], lines[i + 1]]);
+            }
+            const output = generate_csv(next_input);
+            document.getElementById("output").value = output;
+        }
+    </script>
+</body>
+
+</html>
