@@ -15,10 +15,13 @@
             <label for="input">输入</label>
         </p>
         <textarea name="input" id="input" cols="30" rows="10"></textarea>
-        <p>
-            <input type="checkbox" name="filter_empty_line" id="filter_empty_line">
-            <label for="filter_empty_line">过滤空行</label>
-        </p>
+        <p>选项</p>
+        <div>
+            <p>
+                <input type="checkbox" name="filter_empty_line" id="filter_empty_line">
+                <label for="filter_empty_line">过滤空行</label>
+            </p>
+        </div>
         <p>
             <label for="output">输出</label>
         </p>
@@ -29,6 +32,15 @@
     </form>
 
     <script>
+
+        // remember options in localstorage
+        const filter_empty_line = document.getElementById("filter_empty_line");
+        filter_empty_line.checked = localStorage.getItem("filter_empty_line") === "true";
+        filter_empty_line.addEventListener("change", () => {
+            localStorage.setItem("filter_empty_line", filter_empty_line.checked);
+        });
+
+
         /*
         Input:
         [
@@ -66,7 +78,6 @@
         }
 
         const convert = () => {
-            alert("转换中...")
             const input = document.getElementById("input").value;
             const do_filter = document.getElementById("filter_empty_line").checked;
             const lines = input.split("\n").filter((line) => {
@@ -74,7 +85,7 @@
             });
             // convert every two line to one csv line
             const next_input = [];
-            if(!(lines.length % 2 === 0)) {
+            if (!(lines.length % 2 === 0)) {
                 alert("输入行数不是偶数");
                 return;
             }
